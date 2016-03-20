@@ -1,3 +1,4 @@
+require 'cucumber'
 require 'cucumber/constantize'
 require 'cucumber/cli/rerun_file'
 require 'cucumber/events'

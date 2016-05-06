@@ -20,6 +20,8 @@ module Cucumber
       Core::Events.build_registry(
         StepMatch,
         TestRunFinished,
+        TestRunStarted,
+        GherkinSourceRead,
       )
     end
   end

@@ -56,23 +56,27 @@ module Cucumber
         find_step_match!(runtime, configuration)
         unless @skip_invoke || configuration.dry_run? || @exception || @step_collection.exception
           @skip_invoke = true
-          begin
-            @step_match.invoke(@multiline_arg)
-            runtime.after_step
-            status!(:passed)
-          rescue Pending => e
-            failed(configuration, e, false)
-            status!(:pending)
-          rescue Undefined => e
-            failed(configuration, e, false)
-            status!(:undefined)
-          rescue Cucumber::Ast::Table::Different => e
-            @different_table = e.table
-            failed(configuration, e, false)
-            status!(:failed)
-          rescue Exception => e
-            failed(configuration, e, false)
-            status!(:failed)
+          require 'pry-rescue'
+          Pry::rescue do
+            begin
+              @step_match.invoke(@multiline_arg)
+              runtime.after_step
+              status!(:passed)
+            rescue Pending => e
+              failed(configuration, e, false)
+              status!(:pending)
+            rescue Undefined => e
+              failed(configuration, e, false)
+              status!(:undefined)
+            rescue Cucumber::Ast::Table::Different => e
+              @different_table = e.table
+              failed(configuration, e, false)
+              status!(:failed)
+            rescue Exception => e
+              Pry::rescued(e)
+              failed(configuration, e, false)
+              status!(:failed)
+            end
           end
         end
       end
